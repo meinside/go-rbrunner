@@ -11,11 +11,12 @@ import (
 const (
 	tag = "rbrunner"
 
-	ExitStatusNotSet = -1
-	TempDir          = "/tmp"
-	RubyExec         = "ruby"
+	exitStatusNotSet = -1
+	tempDir          = "/tmp"
+	rubyExec         = "ruby"
 )
 
+// RunResult type
 type RunResult struct {
 	ExitStatus   int
 	StdoutOutput string
@@ -25,7 +26,7 @@ type RunResult struct {
 func genTempFile(code string) (filepath string) {
 	filepath = ""
 
-	if file, err := ioutil.TempFile(TempDir, "rbrunner_"); err == nil {
+	if file, err := ioutil.TempFile(tempDir, "rbrunner_"); err == nil {
 		defer file.Close()
 
 		if _, err := file.WriteString(code); err == nil {
@@ -38,13 +39,13 @@ func genTempFile(code string) (filepath string) {
 
 // Run code with given parameters
 func Run(code string, params ...string) (result RunResult) {
-	result.ExitStatus = ExitStatusNotSet
+	result.ExitStatus = exitStatusNotSet
 
 	// generate tempfile
 	if rbFilepath := genTempFile(code); rbFilepath != "" {
 		execParams := []string{rbFilepath}
 		execParams = append(execParams, params...)
-		cmd := exec.Command(RubyExec, execParams...)
+		cmd := exec.Command(rubyExec, execParams...)
 
 		stdout, _ := cmd.StdoutPipe()
 		stderr, _ := cmd.StderrPipe()
@@ -77,6 +78,8 @@ func Run(code string, params ...string) (result RunResult) {
 			} else {
 				result.ExitStatus = 0
 			}
+		} else {
+			result.StderrOutput = err.Error()
 		}
 
 		// delete tempfile
