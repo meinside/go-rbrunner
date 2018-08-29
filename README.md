@@ -1,6 +1,8 @@
 # Go Ruby-Runner
 
-For running ruby code string and getting its result in Go applications.
+For running a ruby code string and getting its result in Go applications.
+
+Given code string is saved as a temporary file and executed by `ruby`.
 
 ## Install
 
@@ -16,7 +18,7 @@ package main
 import (
 	"fmt"
 
-	rbrunner "github.com/meinside/go-rbrunner"
+	rb "github.com/meinside/go-rbrunner"
 )
 
 const code = `#!/usr/bin/env ruby
@@ -24,7 +26,7 @@ const code = `#!/usr/bin/env ruby
 puts "args = #{ARGV[0]}, #{ARGV[1]}"`
 
 func main() {
-	result := rbrunner.Run(code, "arg1", "arg2")
+	result := rb.Run(code, "arg1", "arg2")
 
 	fmt.Printf("result = %+v\n", result)
 }
